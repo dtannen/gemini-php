@@ -14,7 +14,7 @@ class HTTPClient
      * @param string $data The data to send in the body of the request.
      * @param array $options Additional options for the request (e.g., timeout).
      * @return string The response from the server.
-     * @throws \RuntimeException If the HTTP request times out.
+     * @throws \Exception If the HTTP request times out.
      * @throws \Exception If the HTTP request fails for other reasons.
      */
     public static function post(string $url, array $headers = [], string $data = '', array $options = []): string
@@ -55,7 +55,7 @@ class HTTPClient
             if (isset($timeout) && microtime(true) - $start > $timeout) {
                 curl_multi_remove_handle($mh, $ch);
                 curl_multi_close($mh);
-                throw new \RuntimeException("Operation timed out after $timeout seconds");
+                throw new \Exception("Operation timed out after $timeout seconds");
             }
 
             if ($active) {
@@ -73,7 +73,7 @@ class HTTPClient
             curl_close($ch);
             
             if ($errno == CURLE_OPERATION_TIMEOUTED) {
-                throw new \RuntimeException("HTTP request timed out: $error");
+                throw new \Exception("HTTP request timed out: $error");
             } else {
                 throw new \Exception("HTTP request failed: $error");
             }
@@ -82,7 +82,7 @@ class HTTPClient
         curl_close($ch);
 
         if ($response === false) {
-            throw new \RuntimeException("Failed to get response");
+            throw new \Exception("Failed to get response");
         }
 
         return $response;
